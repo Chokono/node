@@ -1,21 +1,20 @@
 document.getElementById('original').addEventListener('click', ()=>{
-	let k = document.getElementById('key').value;
-	let data = {};
-	data[k] = document.getElementById('value').value;
-	send(data);
+		send(1);
 });
 
 document.getElementById('rebuild').addEventListener('click', ()=>{
-	let k = document.getElementById('value').value;
-	let data = {};
-	data[k] = document.getElementById('key').value;
-	send(data);
-	document.getElementById('result').innerHTML = 'fff';
+		send(2);
 });
 
-function send(body){
-	let xhr = new XMLHttpRequest();
-	xhr.open("POST", '/submit', true);
-	xhr.setRequestHeader('Content-Type', 'text/json');
-	xhr.send(JSON.stringify(body));
+function send(number){
+	if(document.getElementById('key').value.indexOf(":") === -1 &&document.getElementById('value').value.indexOf(":") === -1){
+		let xhr = new XMLHttpRequest();
+		xhr.open("POST", `/submit${number}`, true);
+		xhr.setRequestHeader('Content-Type', 'text/json');
+		let data = {};
+		data[document.getElementById('key').value] = document.getElementById('value').value;
+		xhr.send(JSON.stringify(data));
+	} else {
+		console.log('вводите числа без знака ":"');
+	}
 }

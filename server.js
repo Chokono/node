@@ -42,16 +42,35 @@ server.on('request', (req, res)=>{
 		}
 	} else if (req.method === "POST"){
 		let buf = [];
-		req.on('error', (err)=>{
-			console.log('Can not read file', err);
-		})
-		req.on('data', (data)=>{
-			buf.push(data);
-		});
-		req.on('end', ()=>{
-			console.log(Buffer.concat(buf).toString('utf-8'));
-		});
-		res.end(Buffer.concat(buf).toString('utf-8'));
+		if (req.url === '/submit1'){
+			req.on('error', (err)=>{
+				console.log('Can not read file', err);
+			});
+			req.on('data', (data)=>{
+				buf.push(data);
+			});
+			req.on('end', ()=>{
+				console.log(Buffer.concat(buf).toString('utf-8'));
+			});
+			res.end(Buffer.concat(buf).toString('utf-8'));
+		} else if (req.url === '/submit2') {
+			let obj1 = [];
+			req.on('error', (err)=>{
+				console.log('Can not read file', err);
+			});
+			req.on('data', (data)=>{
+				buf.push(data);
+			});
+			req.on('end', ()=>{
+				let obj = Buffer.concat(buf).toString('utf-8');
+				obj = obj.slice(1,-1).split(':');
+				obj1[0] = '{' + obj[1];
+				obj1[1] = obj[0]+ '}'
+				obj1 = obj1.join(':')
+				console.log(obj1.toString());				
+			});
+			res.end(obj1.toString());
+		}
 	}
 });
 
