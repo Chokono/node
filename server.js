@@ -51,17 +51,17 @@ server.on('request', (req, res)=>{
 			});
 		}
 	} else if (req.method === "POST"){
-		let buf = '';
+		let buf = [];
 		req.on('error', (err)=>{
 			console.log('Can not read file', err);
 		})
 		req.on('data', (data)=>{
-			buf += data.toString('utf-8');
+			buf.push(data);
 		});
 		req.on('end', ()=>{
-			console.log(buf);
+			console.log(Buffer.concat(buf).toString('utf-8'));
 		});
-		res.end(buf);
+		res.end(Buffer.concat(buf).toString('utf-8'));
 	}
 });
 
