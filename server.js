@@ -13,32 +13,21 @@ server.on('request', (req, res)=>{
 		if (urlparse.path === '/') {
 			let stream = fs.createReadStream(path.join(__dirname,'index.html'));
 			res.setHeader('Content-Type', 'text/html');
+			stream.on('error', (err)=>{
+				res.statusCode = 503;
+				console.log('error ENOEND', err);
+			})
 			stream.pipe(res);
 		} else {
 			let stream = fs.createReadStream(path.join(__dirname, urlparse.path));
 			if (path.extname(urlparse.path).slice(1) === 'html' || path.extname(urlparse.path).slice(1) === 'css' || path.extname(urlparse.path).slice(1) === 'js' || path.extname(urlparse.path).slice(1) === 'json') {
 				res.setHeader('Content-Type', 'text/'+path.extname(urlparse.path).slice(1));
-			} else {
-				res.setHeader('Content-Type', 'text/text');
 			}
-			let mas = [];
 			stream.on('error', (err)=>{
-				if (path.extname(urlparse.path)) {
-					res.statusCode = 503;
-					console.log('file not read', err);
-				} else {
-					res.statusCode = 404;
-					console.log('Directory not found', err);
-				}
+				res.statusCode = 503;
+				console.log('error ENOEND', err);
 			})
-			stream.on('readable', ()=>{
-				let data = stream.read();
-				mas.push(data);
-			});
-			stream.on('end', ()=>{
-				mas.length = mas.length-1;
-				res.end(Buffer.concat(mas).toString('utf-8'));
-			});
+			stream.pipe(res);
 		}
 	} else if (req.method === "POST"){
 		let buf = [];
